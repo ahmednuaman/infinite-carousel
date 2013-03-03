@@ -1,2 +1,4 @@
-components
+.sass-cache
+app.css
 app.js
+components
