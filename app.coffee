@@ -12,7 +12,8 @@ class Carousel
       items = ''
 
       for i in [0...len]
-        items += opts.fn()
+        items += opts.fn
+          index: i
 
       items
 
