@@ -27,7 +27,5 @@ describe 'carousel', () ->
         it 'should return ' + config.numberOfItems + ' items starting at the ' + target + 'th - ' + config.margin + ' item', () ->
           nth = _.indexOf config.items, entries[0]
 
-          console.log entries
-
           assert.equal nth, entries[0]
           assert.equal entries.length, config.numberOfItems

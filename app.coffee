@@ -106,36 +106,25 @@ config =
   ]
 
 class Carousel
-  @carousel
   @mover
+  @target
 
   constructor: (target) ->
-    @initHandlebarsHelpers()
+    @mover = new Mover()
     @initTemplate target
-    @compile()
-
-  initHandlebarsHelpers: () ->
-    Handlebars.registerHelper 'repeat', (len, opts) ->
-      items = ''
-
-      for i in [0...len]
-        items += opts.fn
-          index: i
-
-      items
 
   initTemplate: (target) ->
-    @carousel = $ target
-    html = @carousel.html()
+    @target = $ target
+
+    html = @target.html()
     @template = Handlebars.compile html
 
-  compile: () ->
-    html = @template config
+    @mover.setupCarousel @
 
-    @carousel.html html
+  compile: (data) ->
+    html = @template data
 
-    @mover = new Mover()
-    @mover.setupCarousel @carousel
+    @target.html html
 
 class Mover
   @currentIndex = 0
@@ -147,8 +136,10 @@ class Mover
   @template
 
   setupCarousel: (@carousel) ->
-    tiles = @carousel.find 'li'
+    tiles = @carousel.target.find 'li'
     @carouselTiles = tiles.toArray()
+
+    @setupMover()
 
   setupMover: () ->
     @itemsLength = config.items.length - 1
@@ -160,6 +151,8 @@ class Mover
   scrollTo: (index) ->
     @currentIndex = @getCurrentIndex index
     dataArray = @getData @currentIndex - config.margin
+
+    @initCarousel dataArray
 
   getCurrentIndex: (index) ->
     if index < @leftItems
@@ -185,6 +178,12 @@ class Mover
       data = clone.splice index, config.numberOfItems
 
     data
+
+  initCarousel: (dataArray) ->
+    init = _.bind @carousel.compile, @carousel,
+      items: dataArray
+
+    init()
 
 try
   module.exports =
