@@ -20,12 +20,12 @@ describe 'carousel', () ->
       assert.equal entries.length, config.numberOfItems
 
   describe '#scrollTo', () ->
-    for target in [10, 20, 50]
+    for target in [0, 1, 10, 50, 100, 150, -1, -10, -50, -100, -150]
       describe target, () ->
         entries = mover.scrollTo target
 
         it 'should return ' + config.numberOfItems + ' items starting at the ' + target + 'th - ' + config.margin + ' item', () ->
-          nth = config.items[target - config.margin]
+          nth = _.indexOf config.items, entries[0]
 
-          assert.equal entries[0], nth
+          assert.equal nth, entries[0]
           assert.equal entries.length, config.numberOfItems
