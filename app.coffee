@@ -156,6 +156,7 @@ class Mover
 try
   module.exports =
     Mover: Mover
+    config: config
 catch e
   $(document).ready () ->
     new Carousel '#carousel'
