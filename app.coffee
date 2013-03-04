@@ -172,7 +172,7 @@ class Mover
     data
 
     if index < 0
-      part1 = clone.splice index, index * -1
+      part1 = clone.splice index, config.numberOfItems
       part2 = clone.splice 0, config.numberOfItems + index
       data = part1.concat part2
 
