@@ -21,6 +21,7 @@ class Carousel
         html += opts.fn
           index: i
           item: items[i]
+          width: config.width
 
       html
 
@@ -40,25 +41,28 @@ class Carousel
 
     @target.html html
 
+    @target.find('li').toArray()
+
 class Mover
   @currentIndex = 0
+  @currentElement
   @carousel
-  @carouselTiles
   @itemsLength
+  @itemsTotal
   @leftItems
   @maxIndex
-  @template
+  @numberOfItemsLength
+  @tiles
 
   setupCarousel: (@carousel) ->
-    tiles = @carousel.target.find 'li'
-    @carouselTiles = tiles.toArray()
-
     @initCarousel @setupMover()
 
   setupMover: () ->
-    @itemsLength = config.items.length - 1
+    @itemsTotal = config.items.length
+    @itemsLength = @itemsTotal - 1
     @leftItems = config.numberOfItems * -1
     @maxIndex = @itemsLength + @leftItems
+    @numberOfItemsLength = config.numberOfItems - 1
 
     @scrollTo 0
 
@@ -69,10 +73,12 @@ class Mover
     dataArray
 
   getCurrentIndex: (index) ->
-    if index < @leftItems
-      index = index * -1
-
     index = index % @itemsLength
+
+    if index < 0
+      index = @itemsTotal + index
+
+    index
 
   getData: (index) ->
     clone = [].concat config.items
@@ -97,7 +103,48 @@ class Mover
     init = _.bind @carousel.compile, @carousel,
       items: dataArray
 
-    init()
+    @tiles = init()
+
+    @currentElement = $ '#item-' + @currentIndex
+    @currentElement.find('#item-link-' + @currentIndex).focus()
+
+    $(document).keydown _.bind @handleKeyDown, @
+
+  handleKeyDown: (event) ->
+    switch event.keyCode
+      when 37 then @handleLeft event.currentTarget
+      when 39 then @handleRight event.currentTarget
+
+  handleRight: (target) ->
+    tile = $ @tiles.shift()
+
+    # $.each @tiles, (i) ->
+    #   tile = $ this
+
+    @tiles.push tile
+
+    # tile.css 'left', @numberOfItemsLength * config.width
+
+    dataArray = @scrollTo @currentIndex + 1
+    @updateTile tile, dataArray[@numberOfItemsLength]
+
+  handleLeft: (target) ->
+    tile = $ @tiles.pop()
+
+    @tiles.unshift tile
+
+    # tile.css 'left', 0
+
+    dataArray = @scrollTo @currentIndex - 1
+    @updateTile tile, dataArray[0]
+
+  updateTile: (tile, data) ->
+    tile.attr 'id', 'item-' + data
+
+    tileA = tile.find 'a'
+    tileA.attr 'id', 'item-link-' + data
+    tileA.text data
+
 
 try
   module.exports =

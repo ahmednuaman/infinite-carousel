@@ -12,9 +12,10 @@
         <div id="carousel-template">
           <ul>
             {{#list items}}
-              <li id="item-{{item}}" style="left: {{multiply index 200}}px">
-                {{item}}
-                <img src="">
+              <li id="item-{{item}}" style="left: {{multiply index width}}px">
+                <a href="#" id="item-link-{{item}}">
+                  {{item}}
+                </a>
               </li>
             {{/list}}
           </ul>
