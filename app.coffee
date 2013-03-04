@@ -25,7 +25,6 @@ class Carousel
       html
 
     Handlebars.registerHelper 'multiply', (index, multiplier) ->
-      console.log arguments
       return index * multiplier
 
   initTemplate: (target) ->
@@ -54,7 +53,7 @@ class Mover
     tiles = @carousel.target.find 'li'
     @carouselTiles = tiles.toArray()
 
-    @initCarousel @setupMover
+    @initCarousel @setupMover()
 
   setupMover: () ->
     @itemsLength = config.items.length - 1
@@ -66,6 +65,8 @@ class Mover
   scrollTo: (index) ->
     @currentIndex = @getCurrentIndex index
     dataArray = @getData @currentIndex - config.margin
+
+    dataArray
 
   getCurrentIndex: (index) ->
     if index < @leftItems
