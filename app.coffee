@@ -111,7 +111,23 @@ class Carousel
 
   constructor: (target) ->
     @mover = new Mover()
+    @initHandlebarsHelpers()
     @initTemplate target
+
+  initHandlebarsHelpers: () ->
+    Handlebars.registerHelper 'list', (items, opts) ->
+      html = ''
+
+      for i in [0...items.length]
+        html += opts.fn
+          index: i
+          item: items[i]
+
+      html
+
+    Handlebars.registerHelper 'multiply', (index, multiplier) ->
+      console.log arguments
+      return index * multiplier
 
   initTemplate: (target) ->
     @target = $ target

@@ -11,12 +11,12 @@
       <div id="carousel">
         <div id="carousel-template">
           <ul>
-            {{#each items}}
-              <li id="item-{{this}}">
-                {{this}}
+            {{#list items}}
+              <li id="item-{{item}}" style="left: {{multiply index 200}}px">
+                {{item}}
                 <img src="">
               </li>
-            {{/each}}
+            {{/list}}
           </ul>
         </div>
       </div>
