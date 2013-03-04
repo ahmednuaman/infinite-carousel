@@ -163,12 +163,9 @@ class Mover
 
   getCurrentIndex: (index) ->
     if index < @leftItems
-      index = @maxIndex
+      index = index * -1
 
-    else if index > @itemsLength
-      index = 0
-
-    index
+    index = index % @itemsLength
 
   getData: (index) ->
     clone = [].concat config.items
