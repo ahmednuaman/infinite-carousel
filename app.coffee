@@ -70,13 +70,8 @@ config =
   ]
 
 class Carousel
-  @currentIndex = 0
   @carousel
-  @carouselTiles
-  @itemsLength
-  @leftItems
-  @maxIndex
-  @template
+  @mover
 
   constructor: (target) ->
     @initHandlebarsHelpers()
@@ -102,11 +97,24 @@ class Carousel
     html = @template config
 
     @carousel.html html
-    @setupCarousel()
 
-  setupCarousel: () ->
+    @mover = new Mover()
+    @mover.setupCarousel @carousel
+
+class Mover
+  @currentIndex = 0
+  @carousel
+  @carouselTiles
+  @itemsLength
+  @leftItems
+  @maxIndex
+  @template
+
+  setupCarousel: (@carousel) ->
     tiles = @carousel.find 'li'
     @carouselTiles = tiles.toArray()
+
+  setupMover: () ->
     @itemsLength = config.items - 1
     @leftItems = config.numberOfItems * -1
     @maxIndex = @itemsLength + @leftItems
@@ -145,5 +153,9 @@ class Carousel
 
     data
 
-$(document).ready () ->
-  new Carousel '#carousel'
+try
+  module.exports =
+    Mover: Mover
+catch e
+  $(document).ready () ->
+    new Carousel '#carousel'
