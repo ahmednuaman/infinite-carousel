@@ -1,7 +1,7 @@
 config =
   numberOfItems: 10
   margin: 2
-  width: 200
+  width: 100
   items: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99]
 
 class Carousel
@@ -47,15 +47,20 @@ class Mover
   @currentIndex = 0
   @currentElement
   @carousel
+  @dataArray
   @itemsLength
   @itemsTotal
   @leftItems
   @maxIndex
+  @maxSelectedIndex
+  @minSelectedIndex
   @numberOfItemsLength
+  @selectedIndex
   @tiles
 
   setupCarousel: (@carousel) ->
-    @initCarousel @setupMover()
+    @setupMover()
+    @initCarousel()
 
   setupMover: () ->
     @itemsTotal = config.items.length
@@ -63,14 +68,15 @@ class Mover
     @leftItems = config.numberOfItems * -1
     @maxIndex = @itemsLength + @leftItems
     @numberOfItemsLength = config.numberOfItems - 1
+    @maxSelectedIndex = config.numberOfItems - config.margin
+    @minSelectedIndex = config.margin
+    @selectedIndex = config.margin
 
     @scrollTo 0
 
   scrollTo: (index) ->
     @currentIndex = @getCurrentIndex index
-    dataArray = @getData @currentIndex - config.margin
-
-    dataArray
+    @dataArray = @getData @currentIndex - config.margin
 
   getCurrentIndex: (index) ->
     index = index % @itemsLength
@@ -99,9 +105,9 @@ class Mover
 
     data
 
-  initCarousel: (dataArray) ->
+  initCarousel: () ->
     init = _.bind @carousel.compile, @carousel,
-      items: dataArray
+      items: @dataArray
 
     @tiles = init()
 
@@ -116,27 +122,50 @@ class Mover
       when 39 then @handleRight event.currentTarget
 
   handleRight: (target) ->
-    tile = $ @tiles.shift()
+    index = @selectedIndex + 1
 
-    # $.each @tiles, (i) ->
-    #   tile = $ this
+    if index > @maxSelectedIndex
+      tile = $ @tiles.shift()
 
-    @tiles.push tile
+      # $.each @tiles, (i) ->
+      #   tile = $ this
 
-    # tile.css 'left', @numberOfItemsLength * config.width
+      @tiles.push tile
 
-    dataArray = @scrollTo @currentIndex + 1
-    @updateTile tile, dataArray[@numberOfItemsLength]
+      # tile.css 'left', @numberOfItemsLength * config.width
+
+      @dataArray = @scrollTo @currentIndex + 1
+      @updateTile tile, @dataArray[@numberOfItemsLength]
+
+    else
+      @selectedIndex = index
+
+    @selectTile()
+
 
   handleLeft: (target) ->
-    tile = $ @tiles.pop()
+    index = @selectedIndex - 1
 
-    @tiles.unshift tile
+    if index < @minSelectedIndex
+      tile = $ @tiles.pop()
 
-    # tile.css 'left', 0
+      @tiles.unshift tile
 
-    dataArray = @scrollTo @currentIndex - 1
-    @updateTile tile, dataArray[0]
+      # tile.css 'left', 0
+
+      @dataArray = @scrollTo @currentIndex - 1
+      @updateTile tile, @dataArray[0]
+
+    else
+      @selectedIndex = index
+
+    @selectTile()
+
+  selectTile: () ->
+    index = @dataArray[@selectedIndex]
+
+    @currentElement = $ '#item-' + index
+    @currentElement.find('#item-link-' + index).focus()
 
   updateTile: (tile, data) ->
     tile.attr 'id', 'item-' + data
