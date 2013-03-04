@@ -19,12 +19,13 @@ describe 'carousel', () ->
     it 'should return ' + config.numberOfItems + ' items', () ->
       assert.equal entries.length, config.numberOfItems
 
-  describe '#scrollTo 10', () ->
-    target = 10
-    entries = mover.scrollTo target
+  describe '#scrollTo', () ->
+    for target in [10, 20, 50]
+      describe target, () ->
+        entries = mover.scrollTo target
 
-    it 'should return ' + config.numberOfItems + ' items starting at the 10th - ' + config.margin + ' item', () ->
-      tenth = config.items[target - config.margin]
+        it 'should return ' + config.numberOfItems + ' items starting at the ' + target + 'th - ' + config.margin + ' item', () ->
+          nth = config.items[target - config.margin]
 
-      assert.equal entries[0], tenth
-      assert.equal entries.length, config.numberOfItems
+          assert.equal entries[0], nth
+          assert.equal entries.length, config.numberOfItems
