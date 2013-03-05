@@ -69,8 +69,8 @@ class Carousel
 
   handleKeyDown: (event) ->
     switch event.keyCode
-      when 37 then @goToTile -1
-      when 39 then @goToTile 1
+      when 37, 4 then @goToTile -1
+      when 39, 5 then @goToTile 1
 
   goToTile: (way) ->
     if @animating
