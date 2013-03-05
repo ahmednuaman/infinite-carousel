@@ -80,8 +80,10 @@
     Carousel.prototype.handleKeyDown = function(event) {
       switch (event.keyCode) {
         case 37:
+        case 4:
           return this.goToTile(-1);
         case 39:
+        case 5:
           return this.goToTile(1);
       }
     };
