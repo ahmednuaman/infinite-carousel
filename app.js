@@ -6,6 +6,12 @@
     numberOfItems: 10,
     margin: 2,
     width: 200,
+    speed: {
+      normal: 600,
+      fast: 200,
+      faster: 10,
+      timeout: 1000
+    },
     items: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99]
   };
 
@@ -13,6 +19,8 @@
 
     function Carousel(target) {
       this.animating = false;
+      this.animationSpeed = config.speed.normal;
+      this.animationSpeedIncrease = null;
       this.data = new Data();
       this.dataIndex = 0;
       this.itemsLength = config.numberOfItems - 1;
@@ -65,16 +73,17 @@
     };
 
     Carousel.prototype.listenToKeyboard = function() {
-      var goToTile;
-      goToTile = _.bind(this.goToTile, this);
-      return $(document).keydown(function(event) {
-        switch (event.keyCode) {
-          case 37:
-            return goToTile(-1);
-          case 39:
-            return goToTile(1);
-        }
-      });
+      $(document).keydown(_.bind(this.handleKeyDown, this));
+      return $(document).keyup(_.bind(this.clearAnimationSpeedTimeout, this));
+    };
+
+    Carousel.prototype.handleKeyDown = function(event) {
+      switch (event.keyCode) {
+        case 37:
+          return this.goToTile(-1);
+        case 39:
+          return this.goToTile(1);
+      }
     };
 
     Carousel.prototype.goToTile = function(way) {
@@ -103,6 +112,9 @@
       } else {
         return;
       }
+      if (!this.animationSpeedIncrease) {
+        this.setAnimationSpeedTimeout();
+      }
       this.animating = true;
       this.animateIndex = 0;
       if (left) {
@@ -123,7 +135,7 @@
           left: incr++ * config.width
         };
         return $(this).stop(true).animate(animateProps, {
-          duration: 'normal',
+          duration: this.animationSpeed,
           complete: animateCallback
         });
       });
@@ -140,6 +152,27 @@
     Carousel.prototype.tileAnimateComplete = function() {
       if (++this.animateIndex === this.itemsLength) {
         return this.animating = false;
+      }
+    };
+
+    Carousel.prototype.setAnimationSpeedTimeout = function() {
+      var callback;
+      callback = _.bind(this.increaseAnimationSpeed, this);
+      return this.animationSpeedIncrease = setTimeout(callback, config.speed.timeout);
+    };
+
+    Carousel.prototype.clearAnimationSpeedTimeout = function() {
+      clearTimeout(this.animationSpeedIncrease);
+      this.animationSpeedIncrease = null;
+      return this.animationSpeed = config.speed.normal;
+    };
+
+    Carousel.prototype.increaseAnimationSpeed = function() {
+      if (this.animationSpeed === config.speed.normal) {
+        this.animationSpeed = config.speed.fast;
+        return this.setAnimationSpeedTimeout();
+      } else if (this.animationSpeed === config.speed.fast) {
+        return this.animationSpeed = config.speed.faster;
       }
     };
 
