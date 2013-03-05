@@ -43,42 +43,17 @@ class Carousel
 
     @target.find('li').toArray()
 
-class Mover
-  @currentIndex = 0
-  @currentElement
-  @carousel
-  @dataArray
-  @itemsLength
-  @itemsTotal
-  @leftItems
-  @maxIndex
-  @maxSelectedIndex
-  @minSelectedIndex
-  @numberOfItemsLength
-  @selectedIndex
-  @tiles
+class Data
 
-  setupCarousel: (@carousel) ->
-    @setupMover()
-    @initCarousel()
-
-  setupMover: () ->
+  constructor: () ->
     @itemsTotal = config.items.length
     @itemsLength = @itemsTotal - 1
-    @leftItems = config.numberOfItems * -1
-    @maxIndex = @itemsLength + @leftItems
-    @numberOfItemsLength = config.numberOfItems - 1
-    @maxSelectedIndex = config.numberOfItems - config.margin
-    @minSelectedIndex = config.margin
-    @selectedIndex = config.margin
 
-    @scrollTo 0
+  dataAt: (index) ->
+    index = @verifyIndex index
+    @getData index
 
-  scrollTo: (index) ->
-    @currentIndex = @getCurrentIndex index
-    @dataArray = @getData @currentIndex - config.margin
-
-  getCurrentIndex: (index) ->
+  verifyIndex: (index) ->
     index = index % @itemsLength
 
     if index < 0
@@ -88,96 +63,16 @@ class Mover
 
   getData: (index) ->
     clone = [].concat config.items
-    data
+    data = clone.splice index, config.numberOfItems
 
-    if index < 0
-      part1 = clone.splice index, config.numberOfItems
-      part2 = clone.splice 0, config.numberOfItems + index
-      data = part1.concat part2
-
-    else if index > @maxIndex
-      part1 = clone.splice index, @itemsLength - index
-      part2 = clone.splice 0, config.numberOfItems - part1.length
-      data = part1.concat part2
-
-    else
-      data = clone.splice index, config.numberOfItems
+    if data.length < config.numberOfItems
+      data = data.concat clone.splice 0, config.numberOfItems - data.length
 
     data
-
-  initCarousel: () ->
-    init = _.bind @carousel.compile, @carousel,
-      items: @dataArray
-
-    @tiles = init()
-
-    @currentElement = $ '#item-' + @currentIndex
-    @currentElement.find('#item-link-' + @currentIndex).focus()
-
-    $(document).keydown _.bind @handleKeyDown, @
-
-  handleKeyDown: (event) ->
-    switch event.keyCode
-      when 37 then @handleLeft event.currentTarget
-      when 39 then @handleRight event.currentTarget
-
-  handleRight: (target) ->
-    index = @selectedIndex + 1
-
-    if index > @maxSelectedIndex
-      tile = $ @tiles.shift()
-
-      # $.each @tiles, (i) ->
-      #   tile = $ this
-
-      @tiles.push tile
-
-      # tile.css 'left', @numberOfItemsLength * config.width
-
-      @dataArray = @scrollTo @currentIndex + 1
-      @updateTile tile, @dataArray[@numberOfItemsLength]
-
-    else
-      @selectedIndex = index
-
-    @selectTile()
-
-
-  handleLeft: (target) ->
-    index = @selectedIndex - 1
-
-    if index < @minSelectedIndex
-      tile = $ @tiles.pop()
-
-      @tiles.unshift tile
-
-      # tile.css 'left', 0
-
-      @dataArray = @scrollTo @currentIndex - 1
-      @updateTile tile, @dataArray[0]
-
-    else
-      @selectedIndex = index
-
-    @selectTile()
-
-  selectTile: () ->
-    index = @dataArray[@selectedIndex]
-
-    @currentElement = $ '#item-' + index
-    @currentElement.find('#item-link-' + index).focus()
-
-  updateTile: (tile, data) ->
-    tile.attr 'id', 'item-' + data
-
-    tileA = tile.find 'a'
-    tileA.attr 'id', 'item-link-' + data
-    tileA.text data
-
 
 try
   module.exports =
-    Mover: Mover
+    Data: Data
     config: config
 catch e
   $(document).ready () ->
