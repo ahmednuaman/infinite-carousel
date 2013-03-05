@@ -1,0 +1,10 @@
+{
+  "name": "infinate-carousel",
+  "version": "0.0.0",
+  "main": ["app.js"],
+  "dependancies": {
+    "handlebars": "latest",
+    "jquery": "latest",
+    "lodash": "latest"
+  }
+}
