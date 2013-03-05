@@ -7,6 +7,7 @@ config =
 class Carousel
 
   constructor: (target) ->
+    @animating = false
     @data = new Data()
     @dataIndex = 0
     @itemsLength = config.numberOfItems - 1
@@ -64,6 +65,9 @@ class Carousel
         when 39 then goToTile 1
 
   goToTile: (way) ->
+    if @animating
+      return
+
     @currentIndex = @currentIndex + way
     @dataIndex = @dataIndex + way
 
@@ -74,19 +78,28 @@ class Carousel
     @currentTile.find('a').focus()
 
   focusTile: (event) ->
+    animateCallback = _.bind @tileAnimateComplete, @
     left = false
     index = @dataIndex
 
     if @currentIndex < @minIndex
       left = true
-      tile = $ @tiles.pop()
 
     else if @currentIndex > @maxIndex
-      tile = $ @tiles.shift()
-      index = index + 2
+      left = false
 
     else
       return
+
+    @animating = true
+    @animateIndex = 0
+
+    if left
+      tile = $ @tiles.pop()
+
+    else
+      tile = $ @tiles.shift()
+      index = index + 2
 
     tile.stop(true).css
       left: if left then @startPx else @endPx
@@ -101,7 +114,9 @@ class Carousel
       animateProps =
         left: incr++ * config.width
 
-      $(this).stop(true).animate animateProps, 'normal'
+      $(this).stop(true).animate animateProps,
+        duration: 'normal',
+        complete: animateCallback
 
     if left
       @tiles.unshift tile
@@ -112,6 +127,10 @@ class Carousel
       @currentIndex = @maxIndex
 
     @selectTile()
+
+  tileAnimateComplete: () ->
+    if ++@animateIndex is @itemsLength
+      @animating = false
 
 class Data
 
