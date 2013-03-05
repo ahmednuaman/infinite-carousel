@@ -1,7 +1,7 @@
 config =
-  numberOfItems: 10
+  numberOfItems: 8
   margin: 2
-  width: 200
+  width: 205
   speed:
     normal: 600
     fast: 200
@@ -69,10 +69,12 @@ class Carousel
 
   handleKeyDown: (event) ->
     switch event.keyCode
-      when 37, 4 then @goToTile -1
-      when 39, 5 then @goToTile 1
+      when 37, 4 then @goToTile -1, event
+      when 39, 5 then @goToTile 1, event
 
-  goToTile: (way) ->
+  goToTile: (way, event) ->
+    event.preventDefault()
+
     if @animating
       return
 
