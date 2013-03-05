@@ -8,7 +8,7 @@ body {
 ul {
   display: block;
   position: absolute;
-  margin: 0;
+  margin: 0 0 0 -380px;
   padding: 0;
 
   li {
@@ -21,7 +21,7 @@ ul {
       background: #0099ff;
       border: 5px solid #000000;
       height: 120px;
-      width: 100px;
+      width: 200px;
 
       &:focus {
         border-color: #ff0000;
