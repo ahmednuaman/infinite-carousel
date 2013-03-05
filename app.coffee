@@ -8,6 +8,8 @@ class Carousel
 
   constructor: (target) ->
     @data = new Data()
+    @maxIndex = config.numberOfItems - config.margin
+    @minIndex = config.margin
     @initHandlebarsHelpers()
     @initTemplate target
 
@@ -42,6 +44,32 @@ class Carousel
 
     @tiles = @target.find('li').toArray()
     @currentIndex = config.margin
+
+    @listenToKeyboard()
+    @selectTile()
+
+  listenToKeyboard: () ->
+    goLeft = _.bind @goLeft, @
+    goRight = _.bind @goRight, @
+
+    $(document).keydown (event) ->
+      switch event.keyCode
+        when 37 then goLeft event
+        when 39 then goRight event
+
+  goLeft: (event) ->
+    index = @currentIndex - 1
+
+    if index >= @minIndex
+      @currentIndex = index
+
+    @selectTile()
+
+  goRight: (event) ->
+    index = @currentIndex + 1
+
+    if index < @maxIndex
+      @currentIndex = index
 
     @selectTile()
 
