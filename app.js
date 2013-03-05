@@ -12,6 +12,7 @@
   Carousel = (function() {
 
     function Carousel(target) {
+      this.animating = false;
       this.data = new Data();
       this.dataIndex = 0;
       this.itemsLength = config.numberOfItems - 1;
@@ -77,6 +78,9 @@
     };
 
     Carousel.prototype.goToTile = function(way) {
+      if (this.animating) {
+        return;
+      }
       this.currentIndex = this.currentIndex + way;
       this.dataIndex = this.dataIndex + way;
       return this.selectTile();
@@ -88,17 +92,24 @@
     };
 
     Carousel.prototype.focusTile = function(event) {
-      var data, incr, index, left, tile;
+      var animateCallback, data, incr, index, left, tile;
+      animateCallback = _.bind(this.tileAnimateComplete, this);
       left = false;
       index = this.dataIndex;
       if (this.currentIndex < this.minIndex) {
         left = true;
-        tile = $(this.tiles.pop());
       } else if (this.currentIndex > this.maxIndex) {
-        tile = $(this.tiles.shift());
-        index = index + 2;
+        left = false;
       } else {
         return;
+      }
+      this.animating = true;
+      this.animateIndex = 0;
+      if (left) {
+        tile = $(this.tiles.pop());
+      } else {
+        tile = $(this.tiles.shift());
+        index = index + 2;
       }
       tile.stop(true).css({
         left: left ? this.startPx : this.endPx
@@ -111,7 +122,10 @@
         animateProps = {
           left: incr++ * config.width
         };
-        return $(this).stop(true).animate(animateProps, 'normal');
+        return $(this).stop(true).animate(animateProps, {
+          duration: 'normal',
+          complete: animateCallback
+        });
       });
       if (left) {
         this.tiles.unshift(tile);
@@ -121,6 +135,12 @@
         this.currentIndex = this.maxIndex;
       }
       return this.selectTile();
+    };
+
+    Carousel.prototype.tileAnimateComplete = function() {
+      if (++this.animateIndex === this.itemsLength) {
+        return this.animating = false;
+      }
     };
 
     return Carousel;
