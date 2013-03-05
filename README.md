@@ -6,4 +6,4 @@ Then run `index.html` in your favourite browser.
 
 # Testing
 
-Install `expect` by running: `npm install expect` and run the tests using [Mocha](http://visionmedia.github.com/mocha/): `mocha --compilers coffee:coffee-script test.coffee`
+Install `expect` by running: `npm install expect` and run the tests using [Mocha](http://visionmedia.github.com/mocha/): `make`

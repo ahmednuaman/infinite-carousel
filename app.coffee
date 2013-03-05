@@ -8,10 +8,12 @@ class Carousel
 
   constructor: (target) ->
     @data = new Data()
-    @maxIndex = config.numberOfItems - config.margin - 1
+    @dataIndex = 0
+    @itemsLength = config.numberOfItems - 1
+    @maxIndex = @itemsLength - config.margin
     @minIndex = config.margin
     @startPx = 0
-    @endPx = (config.numberOfItems - 1) * config.width
+    @endPx = @itemsLength * config.width
     @initHandlebarsHelpers()
     @initTemplate target
 
@@ -37,7 +39,7 @@ class Carousel
     @template = Handlebars.compile html
 
     @compile
-      items: @data.dataAt 0
+      items: @data.getData @dataIndex
 
   compile: (data) ->
     html = @template data
@@ -63,6 +65,7 @@ class Carousel
 
   goToTile: (way) ->
     @currentIndex = @currentIndex + way
+    @dataIndex = @dataIndex + way
 
     @selectTile()
 
@@ -72,6 +75,7 @@ class Carousel
 
   focusTile: (event) ->
     left = false
+    index = @dataIndex
 
     if @currentIndex < @minIndex
       left = true
@@ -79,12 +83,17 @@ class Carousel
 
     else if @currentIndex > @maxIndex
       tile = $ @tiles.shift()
+      index = index + 2
 
     else
       return
 
     tile.stop(true).css
       left: if left then @startPx else @endPx
+
+    data = @data.getDataAt index
+
+    tile.find('a').text data
 
     incr = if left then 1 else 0
 
@@ -110,9 +119,13 @@ class Data
     @itemsTotal = config.items.length
     @itemsLength = @itemsTotal - 1
 
-  dataAt: (index) ->
+  getData: (index) ->
     index = @verifyIndex index
-    @getData index
+    @fetchDataArray index
+
+  getDataAt: (index) ->
+    index = @verifyIndex index
+    config.items[index]
 
   verifyIndex: (index) ->
     index = index % @itemsLength
@@ -122,7 +135,7 @@ class Data
 
     index
 
-  getData: (index) ->
+  fetchDataArray: (index) ->
     clone = [].concat config.items
     data = clone.splice index - config.margin, config.numberOfItems
 
