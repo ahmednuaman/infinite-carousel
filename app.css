@@ -1,0 +1,23 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden; }
+
+ul {
+  display: block;
+  position: absolute;
+  margin: 0 0 0 -380px;
+  padding: 0; }
+  ul li {
+    display: block;
+    position: absolute;
+    list-style: none; }
+    ul li a {
+      display: block;
+      background: #0099ff;
+      border: 5px solid black;
+      height: 120px;
+      width: 200px; }
+      ul li a:focus {
+        border-color: #ff0000; }
