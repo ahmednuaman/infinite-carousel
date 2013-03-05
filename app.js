@@ -3,9 +3,9 @@
   var Carousel, Data, config;
 
   config = {
-    numberOfItems: 10,
+    numberOfItems: 8,
     margin: 2,
-    width: 200,
+    width: 205,
     speed: {
       normal: 600,
       fast: 200,
@@ -81,14 +81,15 @@
       switch (event.keyCode) {
         case 37:
         case 4:
-          return this.goToTile(-1);
+          return this.goToTile(-1, event);
         case 39:
         case 5:
-          return this.goToTile(1);
+          return this.goToTile(1, event);
       }
     };
 
-    Carousel.prototype.goToTile = function(way) {
+    Carousel.prototype.goToTile = function(way, event) {
+      event.preventDefault();
       if (this.animating) {
         return;
       }

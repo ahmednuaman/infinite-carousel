@@ -2,13 +2,18 @@ html,
 body {
   margin: 0;
   padding: 0;
+  width: 960px;
+  height: 540px;
   overflow: hidden;
   background: #ffffff; }
 
 ul {
   display: block;
   position: absolute;
-  margin: 0 0 0 -380px;
+  overflow: hidden;
+  height: 130px;
+  width: 1300px;
+  margin: 0 0 0 -340px;
   padding: 0; }
   ul li {
     display: block;
@@ -19,11 +24,11 @@ ul {
       background: #0099ff;
       border: 5px solid black;
       height: 120px;
-      width: 200px;
+      width: 205px;
       text-align: center;
       text-decoration: none;
       color: #000000;
       font-family: sans-serif;
       font-size: 40pt; }
       ul li a:focus {
-        border-color: #ff0000; }
+        background: white !important; }
