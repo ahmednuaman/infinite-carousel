@@ -40,7 +40,14 @@ class Carousel
 
     @target.html html
 
-    @target.find('li').toArray()
+    @tiles = @target.find('li').toArray()
+    @currentIndex = config.margin
+
+    @selectTile()
+
+  selectTile: () ->
+    @currentTile = @target.find 'li#item-' + @currentIndex
+    @currentTile.find('a').focus()
 
 class Data
 
