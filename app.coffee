@@ -75,6 +75,7 @@ class Carousel
 
   focusTile: (event) ->
     left = false
+    index = @dataIndex
 
     if @currentIndex < @minIndex
       left = true
@@ -82,6 +83,7 @@ class Carousel
 
     else if @currentIndex > @maxIndex
       tile = $ @tiles.shift()
+      index = index + 2
 
     else
       return
@@ -89,7 +91,7 @@ class Carousel
     tile.stop(true).css
       left: if left then @startPx else @endPx
 
-    data = @data.getDataAt @dataIndex
+    data = @data.getDataAt index
 
     tile.find('a').text data
 

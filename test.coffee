@@ -3,7 +3,7 @@ assert = require 'assert'
 app = require './app'
 config = app.config
 data = new app.Data()
-indexes = [0, 1, 7, 8, 9, 10, 50, 100, 150, -1, -7, -8, -9, -10, -11, -12, -13, -50, -100, -150]
+indexes = [0, 1, 7, 8, 9, 10, 17, 18, 19, 50, 100, 150, -1, -7, -8, -9, -10, -11, -12, -13, -50, -100, -150]
 
 describe 'Data', () ->
   describe '#getData', () ->
