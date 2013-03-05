@@ -39,7 +39,7 @@ class Carousel
     @template = Handlebars.compile html
 
     @compile
-      items: @data.dataAt @dataIndex
+      items: @data.getData @dataIndex
 
   compile: (data) ->
     html = @template data
@@ -86,12 +86,12 @@ class Carousel
     else
       return
 
-    data = @data.getData @dataIndex
-
     tile.stop(true).css
       left: if left then @startPx else @endPx
 
-    tile.find('a').text data[if left then 0 else @itemsLength]
+    data = @data.getDataAt @dataIndex
+
+    tile.find('a').text data
 
     incr = if left then 1 else 0
 
@@ -117,9 +117,13 @@ class Data
     @itemsTotal = config.items.length
     @itemsLength = @itemsTotal - 1
 
-  dataAt: (index) ->
+  getData: (index) ->
     index = @verifyIndex index
-    @getData index
+    @fetchDataArray index
+
+  getDataAt: (index) ->
+    index = @verifyIndex index
+    config.items[index]
 
   verifyIndex: (index) ->
     index = index % @itemsLength
@@ -129,7 +133,7 @@ class Data
 
     index
 
-  getData: (index) ->
+  fetchDataArray: (index) ->
     clone = [].concat config.items
     data = clone.splice index - config.margin, config.numberOfItems
 
