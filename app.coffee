@@ -10,6 +10,8 @@ class Carousel
     @data = new Data()
     @maxIndex = config.numberOfItems - config.margin - 1
     @minIndex = config.margin
+    @startPx = 0
+    @endPx = (config.numberOfItems - 1) * config.width
     @initHandlebarsHelpers()
     @initTemplate target
 
@@ -69,11 +71,29 @@ class Carousel
     @currentTile.find('a').focus()
 
   focusTile: (event) ->
+    left = false
+
     if @currentIndex < @minIndex
-      console.log 'left'
+      left = true
+      tile = $ @tiles.shift()
 
     else if @currentIndex > @maxIndex
-      console.log 'right'
+      tile = $ @tiles.pop()
+
+    else
+      return
+
+    tile.stop(true).css
+      left: if left then @endPx else @startPx
+
+    incr = if left then 0 else 1
+
+    $.each @tiles, () ->
+      animateProps =
+        left: incr++ * config.width
+
+      $(this).stop(true).animate animateProps, 'normal'
+
 
 class Data
 
