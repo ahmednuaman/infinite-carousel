@@ -18,6 +18,11 @@ ul {
       background: #0099ff;
       border: 5px solid black;
       height: 120px;
-      width: 200px; }
+      width: 200px;
+      text-align: center;
+      text-decoration: none;
+      color: #000000;
+      font-family: sans-serif;
+      font-size: 40pt; }
       ul li a:focus {
         border-color: #ff0000; }
