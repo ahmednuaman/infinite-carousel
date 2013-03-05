@@ -8,10 +8,12 @@ class Carousel
 
   constructor: (target) ->
     @data = new Data()
-    @maxIndex = config.numberOfItems - config.margin - 1
+    @dataIndex = 0
+    @itemsLength = config.numberOfItems - 1
+    @maxIndex = @itemsLength - config.margin
     @minIndex = config.margin
     @startPx = 0
-    @endPx = (config.numberOfItems - 1) * config.width
+    @endPx = @itemsLength * config.width
     @initHandlebarsHelpers()
     @initTemplate target
 
@@ -37,7 +39,7 @@ class Carousel
     @template = Handlebars.compile html
 
     @compile
-      items: @data.dataAt 0
+      items: @data.dataAt @dataIndex
 
   compile: (data) ->
     html = @template data
@@ -63,6 +65,7 @@ class Carousel
 
   goToTile: (way) ->
     @currentIndex = @currentIndex + way
+    @dataIndex = @dataIndex + way
 
     @selectTile()
 
@@ -83,8 +86,12 @@ class Carousel
     else
       return
 
+    data = @data.getData @dataIndex
+
     tile.stop(true).css
       left: if left then @startPx else @endPx
+
+    tile.find('a').text data[if left then 0 else @itemsLength]
 
     incr = if left then 1 else 0
 
