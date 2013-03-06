@@ -1,6 +1,6 @@
 config =
-  numberOfItems: 8
-  margin: 2
+  numberOfItems: 20
+  margin: 8
   width: 205
   speed:
     normal: 400
