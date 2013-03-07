@@ -19,7 +19,6 @@ class Carousel
     @itemsLength = config.numberOfItems - 1
     @maxIndex = @itemsLength - config.margin
     @minIndex = config.margin
-    @startPx = 0
     @endPx = @itemsLength * config.width
     @initHandlebarsHelpers()
     @initTemplate target
@@ -113,15 +112,18 @@ class Carousel
       tiles = @tiles.splice 0, @animationSpeed
       index = index + config.margin
 
+    @animateLength = @tiles.length
+
     data = @data.getData index
-    endPx = @endPx - @animationSpeed
-    console.log data
+    endPx = @endPx - (@animationSpeed * config.width)
 
     $.each tiles, (i) ->
       tile = $ this
+      leftPx = (if left then 0 else endPx) + (i * config.width)
+      console.log leftPx
 
       tile.stop(true).css
-        left: (if left then @startPx else endPx) + (i * config.width)
+        left: leftPx
 
       tile.find('a').text data[i]
 
@@ -144,10 +146,12 @@ class Carousel
       @tiles = @tiles.concat tiles
       @currentIndex = @maxIndex
 
+    console.log @currentIndex
+
     @selectTile()
 
   tileAnimateComplete: () ->
-    if ++@animateIndex is @itemsLength
+    if ++@animateIndex is @animateLength
       @animating = false
 
   setAnimationSpeedTimeout: () ->
