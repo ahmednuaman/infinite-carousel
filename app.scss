@@ -1,3 +1,8 @@
+$tileWidth: 205px;
+$marginItems: 8;
+$marginShow: 70px;
+$margin: $marginItems * $tileWidth - $marginShow;
+
 html,
 body {
   margin: 0;
@@ -13,8 +18,8 @@ ul {
   position: absolute;
   overflow: hidden;
   height: 130px;
-  width: 960+340px;
-  margin: 0 0 0 -340px;
+  width: 960px + $margin;
+  margin: 0 0 0 $margin * -1;
   padding: 0;
 
   li {
@@ -27,7 +32,7 @@ ul {
       background: #0099ff;
       border: 5px solid #000000;
       height: 120px;
-      width: 205px;
+      width: $tileWidth;
       text-align: center;
       text-decoration: none;
       color: #000000;

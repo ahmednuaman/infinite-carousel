@@ -1,13 +1,12 @@
 config =
-  numberOfItems: 8
-  margin: 2
+  numberOfItems: 20
+  margin: 8
   width: 205
   speed:
-    normal: 600
-    fast: 200
-    faster: 10
+    normal: 1
+    fast: 4 # config.numberOfItems - (confing.margin * 2)
     timeout: 1000
-  items: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99]
+  items: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99]
 
 class Carousel
 
@@ -20,7 +19,6 @@ class Carousel
     @itemsLength = config.numberOfItems - 1
     @maxIndex = @itemsLength - config.margin
     @minIndex = config.margin
-    @startPx = 0
     @endPx = @itemsLength * config.width
     @initHandlebarsHelpers()
     @initTemplate target
@@ -69,8 +67,8 @@ class Carousel
 
   handleKeyDown: (event) ->
     switch event.keyCode
-      when 37, 4 then @goToTile -1, event
-      when 39, 5 then @goToTile 1, event
+      when 37, 4 then @goToTile -@animationSpeed, event
+      when 39, 5 then @goToTile @animationSpeed, event
 
   goToTile: (way, event) ->
     event.preventDefault()
@@ -108,41 +106,52 @@ class Carousel
     @animateIndex = 0
 
     if left
-      tile = $ @tiles.pop()
+      tiles = @tiles.splice -@animationSpeed
 
     else
-      tile = $ @tiles.shift()
-      index = index + 2
+      tiles = @tiles.splice 0, @animationSpeed
+      index = index + config.margin
 
-    tile.stop(true).css
-      left: if left then @startPx else @endPx
+    @animateLength = @tiles.length
 
-    data = @data.getDataAt index
+    data = @data.getData index
+    endPx = @endPx - (@animationSpeed * config.width)
 
-    tile.find('a').text data
+    $.each tiles, (i) ->
+      tile = $ this
+      leftPx = (if left then 0 else endPx) + (i * config.width)
+      console.log leftPx
 
-    incr = if left then 1 else 0
+      tile.stop(true).css
+        left: leftPx
+
+      tile.find('a').text data[i]
+
+    incr = if left then @animationSpeed else 0
 
     $.each @tiles, () ->
+      tile = $ this
       animateProps =
         left: incr++ * config.width
 
-      $(this).stop(true).animate animateProps,
-        duration: @animationSpeed,
+      tile.stop(true).animate animateProps,
+        duration: 'fast',
         complete: animateCallback
 
     if left
-      @tiles.unshift tile
+      @tiles = tiles.concat @tiles
       @currentIndex = @minIndex
 
     else
-      @tiles.push tile
+      @tiles = @tiles.concat tiles
       @currentIndex = @maxIndex
+
+    console.log @currentIndex
 
     @selectTile()
 
   tileAnimateComplete: () ->
-    if ++@animateIndex is @itemsLength
+    if ++@animateIndex is @animateLength
       @animating = false
 
   setAnimationSpeedTimeout: () ->
@@ -155,12 +164,7 @@ class Carousel
     @animationSpeed = config.speed.normal
 
   increaseAnimationSpeed: () ->
-    if @animationSpeed is config.speed.normal
-      @animationSpeed = config.speed.fast
-      @setAnimationSpeedTimeout()
-
-    else if @animationSpeed is config.speed.fast
-      @animationSpeed = config.speed.faster
+    @animationSpeed = config.speed.fast
 
 
 class Data
@@ -186,11 +190,16 @@ class Data
     index
 
   fetchDataArray: (index) ->
-    clone = [].concat config.items
-    data = clone.splice index - config.margin, config.numberOfItems
+    index = index - config.margin
+    end = undefined
+
+    if index > -1
+      end = index + config.numberOfItems
+
+    data = config.items.slice index, end
 
     if data.length < config.numberOfItems
-      data = data.concat clone.splice 0, config.numberOfItems - data.length
+      data = data.concat config.items.slice 0, config.numberOfItems - data.length
 
     data
 
