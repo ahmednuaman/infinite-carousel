@@ -107,11 +107,11 @@ class Carousel
     @animateIndex = 0
 
     if left
-      tile = $ @tiles.pop()
+      tiles = $ @tiles.pop()
 
     else
-      tile = $ @tiles.shift()
-      index = index + 2
+      tiles = @tiles.slice
+      index = index + config.margin
 
     tile.stop(true).css
       left: if left then @startPx else @endPx
@@ -180,11 +180,10 @@ class Data
     index
 
   fetchDataArray: (index) ->
-    clone = [].concat config.items
-    data = clone.splice index - config.margin, config.numberOfItems
+    data = config.items.slice index - config.margin, config.numberOfItems
 
     if data.length < config.numberOfItems
-      data = data.concat clone.splice 0, config.numberOfItems - data.length
+      data = data.concat config.items.slice 0, config.numberOfItems - data.length
 
     data
 
