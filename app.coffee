@@ -115,7 +115,7 @@ class Carousel
     @animateLength = @tiles.length
 
     data = @data.getData index
-    endPx = @endPx - (@animationSpeed * config.width)
+    endPx = @endPx - ((tiles.length - 1) * config.width)
 
     $.each tiles, (i) ->
       tile = $ this
@@ -135,7 +135,7 @@ class Carousel
         left: incr++ * config.width
 
       tile.stop(true).animate animateProps,
-        duration: 'fast',
+        duration: 'normal',
         complete: animateCallback
 
     if left
