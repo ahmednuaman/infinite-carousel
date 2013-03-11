@@ -63,7 +63,7 @@ class Carousel
 
   listenToKeyboard: () ->
     $(document).keydown _.bind @handleKeyDown, @
-    $(document).keyup _.bind @clearAnimationSpeedTimeout, @
+    # $(document).keyup _.bind @clearAnimationSpeedTimeout, @
 
   handleKeyDown: (event) ->
     switch event.keyCode
