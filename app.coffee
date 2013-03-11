@@ -62,7 +62,8 @@ class Carousel
     @selectTile()
 
   listenToKeyboard: () ->
-    $(document).keydown _.bind @handleKeyDown, @
+    # $(document).keydown _.bind @handleKeyDown, @
+    @target.find('a').keydown _.bind @handleKeyDown, @
     # $(document).keyup _.bind @clearAnimationSpeedTimeout, @
 
   handleKeyDown: (event) ->
