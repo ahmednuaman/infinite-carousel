@@ -3,8 +3,8 @@
   var Carousel, Data, config;
 
   config = {
-    numberOfItems: 20,
-    margin: 8,
+    numberOfItems: 8,
+    margin: 2,
     width: 205,
     speed: {
       normal: 1,
@@ -16,11 +16,11 @@
 
   Carousel = (function() {
 
-    function Carousel(target) {
+    function Carousel(target, data) {
       this.animating = false;
       this.animationSpeed = config.speed.normal;
       this.animationSpeedIncrease = null;
-      this.data = new Data();
+      this.data = new Data(data);
       this.dataIndex = 0;
       this.itemsLength = config.numberOfItems - 1;
       this.maxIndex = this.itemsLength - config.margin;
@@ -71,8 +71,7 @@
     };
 
     Carousel.prototype.listenToKeyboard = function() {
-      $(document).keydown(_.bind(this.handleKeyDown, this));
-      return $(document).keyup(_.bind(this.clearAnimationSpeedTimeout, this));
+      return this.target.find('a').keydown(_.bind(this.handleKeyDown, this));
     };
 
     Carousel.prototype.handleKeyDown = function(event) {
@@ -113,9 +112,6 @@
       } else {
         return;
       }
-      if (!this.animationSpeedIncrease) {
-        this.setAnimationSpeedTimeout();
-      }
       this.animating = true;
       this.animateIndex = 0;
       if (left) {
@@ -126,7 +122,7 @@
       }
       this.animateLength = this.tiles.length;
       data = this.data.getData(index);
-      endPx = this.endPx - (this.animationSpeed * config.width);
+      endPx = this.endPx - ((tiles.length - 1) * config.width);
       $.each(tiles, function(i) {
         var leftPx, tile;
         tile = $(this);
@@ -145,7 +141,7 @@
           left: incr++ * config.width
         };
         return tile.stop(true).animate(animateProps, {
-          duration: 'fast',
+          duration: 'normal',
           complete: animateCallback
         });
       });
@@ -188,8 +184,9 @@
 
   Data = (function() {
 
-    function Data() {
-      this.itemsTotal = config.items.length;
+    function Data(data) {
+      this.data = data;
+      this.itemsTotal = this.data.length;
       this.itemsLength = this.itemsTotal - 1;
     }
 
@@ -200,7 +197,7 @@
 
     Data.prototype.getDataAt = function(index) {
       index = this.verifyIndex(index);
-      return config.items[index];
+      return this.data[index];
     };
 
     Data.prototype.verifyIndex = function(index) {
@@ -218,9 +215,9 @@
       if (index > -1) {
         end = index + config.numberOfItems;
       }
-      data = config.items.slice(index, end);
+      data = this.data.slice(index, end);
       if (data.length < config.numberOfItems) {
-        data = data.concat(config.items.slice(0, config.numberOfItems - data.length));
+        data = data.concat(this.data.slice(0, config.numberOfItems - data.length));
       }
       return data;
     };
@@ -236,7 +233,7 @@
     };
   } catch (e) {
     $(document).ready(function() {
-      return new Carousel('#carousel');
+      return new Carousel('#carousel', config.items);
     });
   }
 
