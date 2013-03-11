@@ -1,6 +1,6 @@
 config =
-  numberOfItems: 20
-  margin: 8
+  numberOfItems: 8
+  margin: 2
   width: 205
   speed:
     normal: 1
@@ -10,11 +10,11 @@ config =
 
 class Carousel
 
-  constructor: (target) ->
+  constructor: (target, data) ->
     @animating = false
     @animationSpeed = config.speed.normal
     @animationSpeedIncrease = null
-    @data = new Data()
+    @data = new Data data
     @dataIndex = 0
     @itemsLength = config.numberOfItems - 1
     @maxIndex = @itemsLength - config.margin
@@ -62,8 +62,9 @@ class Carousel
     @selectTile()
 
   listenToKeyboard: () ->
-    $(document).keydown _.bind @handleKeyDown, @
-    $(document).keyup _.bind @clearAnimationSpeedTimeout, @
+    # $(document).keydown _.bind @handleKeyDown, @
+    @target.find('a').keydown _.bind @handleKeyDown, @
+    # $(document).keyup _.bind @clearAnimationSpeedTimeout, @
 
   handleKeyDown: (event) ->
     switch event.keyCode
@@ -99,8 +100,8 @@ class Carousel
     else
       return
 
-    if !@animationSpeedIncrease
-      @setAnimationSpeedTimeout()
+    # if !@animationSpeedIncrease
+    #   @setAnimationSpeedTimeout()
 
     @animating = true
     @animateIndex = 0
@@ -115,7 +116,7 @@ class Carousel
     @animateLength = @tiles.length
 
     data = @data.getData index
-    endPx = @endPx - (@animationSpeed * config.width)
+    endPx = @endPx - ((tiles.length - 1) * config.width)
 
     $.each tiles, (i) ->
       tile = $ this
@@ -135,7 +136,7 @@ class Carousel
         left: incr++ * config.width
 
       tile.stop(true).animate animateProps,
-        duration: 'fast',
+        duration: 'normal',
         complete: animateCallback
 
     if left
@@ -169,8 +170,8 @@ class Carousel
 
 class Data
 
-  constructor: () ->
-    @itemsTotal = config.items.length
+  constructor: (@data) ->
+    @itemsTotal = @data.length
     @itemsLength = @itemsTotal - 1
 
   getData: (index) ->
@@ -179,7 +180,7 @@ class Data
 
   getDataAt: (index) ->
     index = @verifyIndex index
-    config.items[index]
+    @data[index]
 
   verifyIndex: (index) ->
     index = index % @itemsLength
@@ -196,10 +197,10 @@ class Data
     if index > -1
       end = index + config.numberOfItems
 
-    data = config.items.slice index, end
+    data = @data.slice index, end
 
     if data.length < config.numberOfItems
-      data = data.concat config.items.slice 0, config.numberOfItems - data.length
+      data = data.concat @data.slice 0, config.numberOfItems - data.length
 
     data
 
@@ -209,4 +210,4 @@ try
     config: config
 catch e
   $(document).ready () ->
-    new Carousel '#carousel'
+    new Carousel '#carousel', config.items
