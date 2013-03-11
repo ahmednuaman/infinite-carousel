@@ -1,6 +1,6 @@
 config =
-  numberOfItems: 20
-  margin: 8
+  numberOfItems: 8
+  margin: 2
   width: 205
   speed:
     normal: 1
@@ -99,8 +99,8 @@ class Carousel
     else
       return
 
-    if !@animationSpeedIncrease
-      @setAnimationSpeedTimeout()
+    # if !@animationSpeedIncrease
+    #   @setAnimationSpeedTimeout()
 
     @animating = true
     @animateIndex = 0
