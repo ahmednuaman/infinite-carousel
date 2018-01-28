@@ -6,4 +6,4 @@ Then run `index.html` in your favourite browser.
 
 # Testing
 
-Install `expect` by running: `npm install expect` and run the tests using [Mocha](http://visionmedia.github.com/mocha/): `make`
+Install `expect` by running: `npm install expect` and run the tests using [Mocha](http://mochajs.org/): `make`
